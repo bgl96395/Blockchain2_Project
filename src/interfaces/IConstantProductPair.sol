@@ -32,7 +32,9 @@ interface IConstantProductPair {
         uint256 secondTokenAmountMinimum,
         address liquidityRecipient,
         uint256 transactionDeadline
-    ) external returns (uint256 firstTokenAmountDeposited, uint256 secondTokenAmountDeposited, uint256 liquidityTokensMinted);
+    )
+        external
+        returns (uint256 firstTokenAmountDeposited, uint256 secondTokenAmountDeposited, uint256 liquidityTokensMinted);
 
     function removeLiquidity(
         uint256 liquidityTokensToBurn,
