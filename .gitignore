@@ -1,0 +1,50 @@
+# Foundry
+cache/
+out/
+broadcast/
+broadcast/*/31337/
+broadcast/**/dry-run/
+
+# Dependencies
+lib/
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+build/
+dist/
+artifacts/
+typechain/
+typechain-types/
+
+# Coverage
+coverage/
+lcov.info
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# The Graph
+subgraph/generated/
+subgraph/build/
+
+# Frontend
+frontend/.next/
+frontend/out/
