@@ -5,11 +5,15 @@ import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import { IERC1155Receiver } from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { IResourceMarketplace } from "../interfaces/IResourceMarketplace.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155Receiver {
+contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155Receiver, AccessControl, Pausable {
     uint256 public constant MINIMUM_LIQUIDITY = 1000;
     uint256 public constant FEE_NUMERATOR = 997;
     uint256 public constant FEE_DENOMINATOR = 1000;
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     IERC1155 public immutable gameResources;
 
@@ -33,6 +37,8 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
 
     constructor(address gameResourcesAddress) {
         gameResources = IERC1155(gameResourcesAddress);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(PAUSER_ROLE, msg.sender);
     }
 
     function getPoolReserves(uint256 firstResourceId, uint256 secondResourceId)
@@ -65,6 +71,7 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
     )
         external
         nonReentrant
+        whenNotPaused
         returns (
             uint256 firstResourceAmountDeposited,
             uint256 secondResourceAmountDeposited,
@@ -229,7 +236,12 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         uint256 secondResourceAmountMinimum,
         address resourceRecipient,
         uint256 transactionDeadline
-    ) external nonReentrant returns (uint256 firstResourceAmountWithdrawn, uint256 secondResourceAmountWithdrawn) {
+    )
+        external
+        nonReentrant
+        whenNotPaused
+        returns (uint256 firstResourceAmountWithdrawn, uint256 secondResourceAmountWithdrawn)
+    {
         if (block.timestamp > transactionDeadline) revert TransactionDeadlineExpired();
 
         bytes32 poolKey = _computePoolKey(firstResourceId, secondResourceId);
@@ -285,7 +297,7 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         uint256 minimumOutputResourceAmount,
         address outputRecipient,
         uint256 transactionDeadline
-    ) external nonReentrant returns (uint256 outputResourceAmount) {
+    ) external nonReentrant whenNotPaused returns (uint256 outputResourceAmount) {
         if (block.timestamp > transactionDeadline) revert TransactionDeadlineExpired();
         if (inputResourceAmount == 0) revert InsufficientInputAmount();
 
@@ -336,7 +348,15 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         return IERC1155Receiver.onERC1155BatchReceived.selector;
     }
 
-    function supportsInterface(bytes4 interfaceId) external pure returns (bool) {
-        return interfaceId == type(IERC1155Receiver).interfaceId;
+    function pauseMarketplace() external onlyRole(PAUSER_ROLE) {
+        _pause();
+    }
+
+    function unpauseMarketplace() external onlyRole(PAUSER_ROLE) {
+        _unpause();
+    }
+
+    function supportsInterface(bytes4 interfaceId) public view override(AccessControl, IERC165) returns (bool) {
+        return interfaceId == type(IERC1155Receiver).interfaceId || super.supportsInterface(interfaceId);
     }
 }
