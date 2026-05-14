@@ -71,7 +71,154 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
             uint256 liquidityTokensMinted
         )
     {
-        revert("Not implemented yet");
+        if (block.timestamp > transactionDeadline) {
+            revert TransactionDeadlineExpired();
+        }
+
+        bytes32 poolKey = _computePoolKey(firstResourceId, secondResourceId);
+        (
+            uint256 smallerId,
+            uint256 largerId,
+            uint256 amountForSmaller,
+            uint256 amountForLarger,
+            uint256 minSmaller,
+            uint256 minLarger
+        ) = _orderInputs(
+            firstResourceId,
+            secondResourceId,
+            firstResourceAmountDesired,
+            secondResourceAmountDesired,
+            firstResourceAmountMinimum,
+            secondResourceAmountMinimum
+        );
+
+        LiquidityPool storage pool = liquidityPools[poolKey];
+
+        (uint256 actualSmallerAmount, uint256 actualLargerAmount) =
+            _calculateOptimalDeposit(pool, amountForSmaller, amountForLarger, minSmaller, minLarger);
+
+        gameResources.safeTransferFrom(msg.sender, address(this), smallerId, actualSmallerAmount, "");
+        gameResources.safeTransferFrom(msg.sender, address(this), largerId, actualLargerAmount, "");
+
+        liquidityTokensMinted =
+            _mintLiquidityTokens(pool, poolKey, liquidityRecipient, actualSmallerAmount, actualLargerAmount);
+
+        pool.firstResourceReserve += actualSmallerAmount;
+        pool.secondResourceReserve += actualLargerAmount;
+
+        (firstResourceAmountDeposited, secondResourceAmountDeposited) = firstResourceId < secondResourceId
+            ? (actualSmallerAmount, actualLargerAmount)
+            : (actualLargerAmount, actualSmallerAmount);
+
+        emit LiquidityAdded(
+            liquidityRecipient,
+            firstResourceId,
+            secondResourceId,
+            firstResourceAmountDeposited,
+            secondResourceAmountDeposited,
+            liquidityTokensMinted
+        );
+    }
+
+    function _orderInputs(
+        uint256 firstResourceId,
+        uint256 secondResourceId,
+        uint256 firstAmountDesired,
+        uint256 secondAmountDesired,
+        uint256 firstAmountMinimum,
+        uint256 secondAmountMinimum
+    )
+        private
+        pure
+        returns (
+            uint256 smallerId,
+            uint256 largerId,
+            uint256 amountForSmaller,
+            uint256 amountForLarger,
+            uint256 minimumForSmaller,
+            uint256 minimumForLarger
+        )
+    {
+        if (firstResourceId < secondResourceId) {
+            return (
+                firstResourceId,
+                secondResourceId,
+                firstAmountDesired,
+                secondAmountDesired,
+                firstAmountMinimum,
+                secondAmountMinimum
+            );
+        }
+        return (
+            secondResourceId,
+            firstResourceId,
+            secondAmountDesired,
+            firstAmountDesired,
+            secondAmountMinimum,
+            firstAmountMinimum
+        );
+    }
+
+    function _calculateOptimalDeposit(
+        LiquidityPool storage pool,
+        uint256 smallerAmountDesired,
+        uint256 largerAmountDesired,
+        uint256 smallerAmountMinimum,
+        uint256 largerAmountMinimum
+    ) private view returns (uint256 actualSmallerAmount, uint256 actualLargerAmount) {
+        uint256 currentSmallerReserve = pool.firstResourceReserve;
+        uint256 currentLargerReserve = pool.secondResourceReserve;
+
+        if (currentSmallerReserve == 0 && currentLargerReserve == 0) {
+            return (smallerAmountDesired, largerAmountDesired);
+        }
+
+        uint256 largerAmountOptimal = (smallerAmountDesired * currentLargerReserve) / currentSmallerReserve;
+        if (largerAmountOptimal <= largerAmountDesired) {
+            if (largerAmountOptimal < largerAmountMinimum) revert InsufficientLiquidityMinted();
+            return (smallerAmountDesired, largerAmountOptimal);
+        }
+
+        uint256 smallerAmountOptimal = (largerAmountDesired * currentSmallerReserve) / currentLargerReserve;
+        if (smallerAmountOptimal < smallerAmountMinimum) revert InsufficientLiquidityMinted();
+        return (smallerAmountOptimal, largerAmountDesired);
+    }
+
+    function _mintLiquidityTokens(
+        LiquidityPool storage pool,
+        bytes32 poolKey,
+        address liquidityRecipient,
+        uint256 smallerAmount,
+        uint256 largerAmount
+    ) private returns (uint256 liquidityTokensMinted) {
+        uint256 currentTotalSupply = pool.totalLiquiditySupply;
+
+        if (currentTotalSupply == 0) {
+            liquidityTokensMinted = _squareRoot(smallerAmount * largerAmount);
+            if (liquidityTokensMinted <= MINIMUM_LIQUIDITY) revert InsufficientLiquidityMinted();
+            liquidityTokensMinted -= MINIMUM_LIQUIDITY;
+            pool.totalLiquiditySupply = liquidityTokensMinted + MINIMUM_LIQUIDITY;
+            liquidityBalanceOf[poolKey][address(0)] = MINIMUM_LIQUIDITY;
+        } else {
+            uint256 mintedFromSmaller = (smallerAmount * currentTotalSupply) / pool.firstResourceReserve;
+            uint256 mintedFromLarger = (largerAmount * currentTotalSupply) / pool.secondResourceReserve;
+            liquidityTokensMinted = mintedFromSmaller < mintedFromLarger ? mintedFromSmaller : mintedFromLarger;
+            if (liquidityTokensMinted == 0) revert InsufficientLiquidityMinted();
+            pool.totalLiquiditySupply = currentTotalSupply + liquidityTokensMinted;
+        }
+
+        liquidityBalanceOf[poolKey][liquidityRecipient] += liquidityTokensMinted;
+    }
+
+    function _squareRoot(uint256 inputValue) private pure returns (uint256 squareRootResult) {
+        if (inputValue == 0) return 0;
+        uint256 currentEstimate = inputValue;
+        uint256 nextEstimate = (inputValue + 1) / 2;
+        while (nextEstimate < currentEstimate) {
+            currentEstimate = nextEstimate;
+            nextEstimate = (inputValue / nextEstimate + nextEstimate) / 2;
+        }
+        return currentEstimate;
     }
 
     function removeLiquidity(
