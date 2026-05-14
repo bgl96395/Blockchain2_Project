@@ -286,7 +286,42 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         address outputRecipient,
         uint256 transactionDeadline
     ) external nonReentrant returns (uint256 outputResourceAmount) {
-        revert("Not implemented yet");
+        if (block.timestamp > transactionDeadline) revert TransactionDeadlineExpired();
+        if (inputResourceAmount == 0) revert InsufficientInputAmount();
+
+        bytes32 poolKey = _computePoolKey(inputResourceId, outputResourceId);
+        LiquidityPool storage pool = liquidityPools[poolKey];
+
+        if (pool.totalLiquiditySupply == 0) revert PoolDoesNotExist();
+
+        bool inputIsSmaller = inputResourceId < outputResourceId;
+        uint256 inputReserve = inputIsSmaller ? pool.firstResourceReserve : pool.secondResourceReserve;
+        uint256 outputReserve = inputIsSmaller ? pool.secondResourceReserve : pool.firstResourceReserve;
+
+        uint256 inputAmountWithFee = inputResourceAmount * FEE_NUMERATOR;
+        uint256 numerator = inputAmountWithFee * outputReserve;
+        uint256 denominator = (inputReserve * FEE_DENOMINATOR) + inputAmountWithFee;
+        outputResourceAmount = numerator / denominator;
+
+        if (outputResourceAmount < minimumOutputResourceAmount) revert InsufficientOutputAmount();
+        if (outputResourceAmount >= outputReserve) revert InsufficientOutputAmount();
+
+        gameResources.safeTransferFrom(msg.sender, address(this), inputResourceId, inputResourceAmount, "");
+        gameResources.safeTransferFrom(address(this), outputRecipient, outputResourceId, outputResourceAmount, "");
+
+        if (inputIsSmaller) {
+            pool.firstResourceReserve += inputResourceAmount;
+            pool.secondResourceReserve -= outputResourceAmount;
+        } else {
+            pool.secondResourceReserve += inputResourceAmount;
+            pool.firstResourceReserve -= outputResourceAmount;
+        }
+
+        uint256 newProduct = pool.firstResourceReserve * pool.secondResourceReserve;
+        uint256 oldProduct = inputReserve * outputReserve;
+        if (newProduct < oldProduct) revert ConstantProductInvariantViolated();
+
+        emit ResourcesSwapped(msg.sender, inputResourceId, outputResourceId, inputResourceAmount, outputResourceAmount);
     }
 
     function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) {
