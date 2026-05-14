@@ -230,7 +230,52 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         address resourceRecipient,
         uint256 transactionDeadline
     ) external nonReentrant returns (uint256 firstResourceAmountWithdrawn, uint256 secondResourceAmountWithdrawn) {
-        revert("Not implemented yet");
+        if (block.timestamp > transactionDeadline) revert TransactionDeadlineExpired();
+
+        bytes32 poolKey = _computePoolKey(firstResourceId, secondResourceId);
+        LiquidityPool storage pool = liquidityPools[poolKey];
+
+        if (pool.totalLiquiditySupply == 0) revert PoolDoesNotExist();
+        if (liquidityBalanceOf[poolKey][msg.sender] < liquidityTokensToBurn) {
+            revert InsufficientLiquidityBurned();
+        }
+
+        uint256 smallerAmountWithdrawn = (liquidityTokensToBurn * pool.firstResourceReserve) / pool.totalLiquiditySupply;
+        uint256 largerAmountWithdrawn = (liquidityTokensToBurn * pool.secondResourceReserve) / pool.totalLiquiditySupply;
+
+        if (smallerAmountWithdrawn == 0 || largerAmountWithdrawn == 0) revert InsufficientLiquidityBurned();
+
+        (uint256 minSmaller, uint256 minLarger) = firstResourceId < secondResourceId
+            ? (firstResourceAmountMinimum, secondResourceAmountMinimum)
+            : (secondResourceAmountMinimum, firstResourceAmountMinimum);
+
+        if (smallerAmountWithdrawn < minSmaller) revert InsufficientLiquidityBurned();
+        if (largerAmountWithdrawn < minLarger) revert InsufficientLiquidityBurned();
+
+        liquidityBalanceOf[poolKey][msg.sender] -= liquidityTokensToBurn;
+        pool.totalLiquiditySupply -= liquidityTokensToBurn;
+        pool.firstResourceReserve -= smallerAmountWithdrawn;
+        pool.secondResourceReserve -= largerAmountWithdrawn;
+
+        (uint256 smallerId, uint256 largerId) = firstResourceId < secondResourceId
+            ? (firstResourceId, secondResourceId)
+            : (secondResourceId, firstResourceId);
+
+        gameResources.safeTransferFrom(address(this), resourceRecipient, smallerId, smallerAmountWithdrawn, "");
+        gameResources.safeTransferFrom(address(this), resourceRecipient, largerId, largerAmountWithdrawn, "");
+
+        (firstResourceAmountWithdrawn, secondResourceAmountWithdrawn) = firstResourceId < secondResourceId
+            ? (smallerAmountWithdrawn, largerAmountWithdrawn)
+            : (largerAmountWithdrawn, smallerAmountWithdrawn);
+
+        emit LiquidityRemoved(
+            msg.sender,
+            firstResourceId,
+            secondResourceId,
+            firstResourceAmountWithdrawn,
+            secondResourceAmountWithdrawn,
+            liquidityTokensToBurn
+        );
     }
 
     function swapExactInputForOutput(
