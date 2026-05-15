@@ -1,0 +1,36 @@
+type LiquidityProvider @entity(immutable: false) {
+  id: ID!
+  address: Bytes!
+  totalLiquidityAdded: BigInt!
+  totalLiquidityRemoved: BigInt!
+}
+
+type SwapEvent @entity(immutable: true) {
+  id: ID!
+  swapInitiator: Bytes!
+  inputResourceId: BigInt!
+  outputResourceId: BigInt!
+  inputAmount: BigInt!
+  outputAmount: BigInt!
+  blockTimestamp: BigInt!
+}
+
+type LiquidityEvent @entity(immutable: true) {
+  id: ID!
+  liquidityProvider: Bytes!
+  firstResourceAmount: BigInt!
+  secondResourceAmount: BigInt!
+  liquidityTokens: BigInt!
+  blockTimestamp: BigInt!
+  isAddition: Boolean!
+}
+
+type Proposal @entity(immutable: false) {
+  id: ID!
+  proposer: Bytes!
+  description: String!
+  state: String!
+  forVotes: BigInt!
+  againstVotes: BigInt!
+  createdTimestamp: BigInt!
+}
