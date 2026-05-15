@@ -6,14 +6,14 @@ import { GameResources } from "../../src/resources/GameResources.sol";
 
 contract GameResourcesTest is Test {
     GameResources public gameResources;
-    
+
     address public ADMIN_ADDRESS;
-    address public USER_ALICE; 
+    address public USER_ALICE;
 
     function setUp() public {
-    ADMIN_ADDRESS = makeAddr("admin");
-    USER_ALICE = makeAddr("alice");
-    gameResources = new GameResources("https://api.gamefi/{id}.json", ADMIN_ADDRESS);
+        ADMIN_ADDRESS = makeAddr("admin");
+        USER_ALICE = makeAddr("alice");
+        gameResources = new GameResources("https://api.gamefi/{id}.json", ADMIN_ADDRESS);
     }
 
     function test_MintResource_AssignsCorrectBalance() public {
