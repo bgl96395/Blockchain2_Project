@@ -1,33 +1,68 @@
-# DeFi Super-App — Blockchain Technologies 2 Final Project
+# Crypto Realm — Blockchain Technologies 2 Final Project
 
-Production-grade decentralized finance protocol combining a constant-product
-automated market maker, a collateralized lending pool, and an ERC-4626
-tokenized yield vault, governed by an on-chain DAO and deployed to Base Sepolia.
+Production-grade GameFi economy combining an ERC-1155 in-game item system,
+a crafting station, a constant-product marketplace for fungible resources,
+an NFT rental vault, Chainlink VRF-powered loot boxes, and on-chain DAO
+governance, deployed on Base Sepolia.
 
 ## Team
 
-| Member  | Role            | Primary ownership                                                        |
-| ------- | --------------- | ------------------------------------------------------------------------ |
-| Asylbek | Team lead       | AMM, lending pool, Yul assembly module, architecture documentation       |
-| Bigali  | Smart contracts | ERC-4626 vault, token contracts, UUPS upgradeability, gas report         |
-| Miras   | Infrastructure  | Governor + Timelock, Chainlink oracle, subgraph, frontend, deploy scripts |
+| Member  | Role            | Primary ownership                                                 |
+| ------- | --------------- | ----------------------------------------------------------------- |
+| Asylbek | Team lead       | ResourceMarketplace AMM, Yul assembly module, architecture docs   |
+| Bigali  | Smart contracts | GameResources ERC-1155, CraftingStation, NFTRentalVault, UUPS     |
+| Miras   | Infrastructure  | GameToken, Governor, LootBox VRF, PriceOracle, frontend, subgraph |
 
 ## Scenario
 
-Option A — DeFi Super-App.
+Option B — GameFi Economy.
 
 ## Mandatory components
 
-- Constant-product AMM with 0.3 percent fee, slippage protection, LP tokens (built from scratch)
-- Collateralized lending pool with LTV, health factor, liquidation, linear interest
-- ERC-4626 tokenized yield vault passing all rounding invariants
+- ERC-1155 in-game item system with crafting recipes
+- Constant-product AMM marketplace for fungible resources
+- ERC-4626 NFT rental vault
+- Chainlink VRF-powered loot box drops
 - ERC20Votes plus ERC20Permit governance token
-- Full OpenZeppelin Governor stack with TimelockController (two-day delay)
-- Chainlink price feed integration with staleness checks and mock aggregator
-- The Graph subgraph with at least four entities and five documented queries
-- UUPS upgradeable architecture with documented V1 to V2 upgrade path
-- Factory contract using both CREATE and CREATE2
-- Yul assembly module benchmarked against pure Solidity equivalent
+- Full OpenZeppelin Governor stack with TimelockController
+- Chainlink price feed integration with staleness checks
+- The Graph subgraph with indexed protocol events
+- UUPS upgradeable architecture
+- Factory contract with CREATE and CREATE2
+- Yul assembly module benchmarked against pure Solidity
 - Deployment and verification on Base Sepolia
-- React plus Wagmi plus Viem frontend with wallet connection and subgraph reads
+- HTML plus Ethers.js frontend
+
+## Repository structure
+
+\`\`\`
+src/
+  resources/      ERC-1155 game items
+  crafting/       crafting station with recipes
+  marketplace/    constant-product AMM for resources
+  rental/         ERC-4626 NFT rental vault
+  lootbox/        Chainlink VRF-powered loot drops
+  oracle/         Chainlink price feed adapter
+  governance/     Governor, Timelock, ERC20Votes token
+  upgradeable/    UUPS upgradeable variants
+  factory/        deterministic deployment factories
+  libraries/      shared math and Yul-optimized helpers
+  interfaces/     external interfaces
+  mocks/          test-only mock contracts
+test/             unit, fuzz, invariant, fork tests
+script/           Foundry deployment scripts
+docs/             architecture, audit, gas, ADRs
+frontend/         HTML + Ethers.js dApp
+subgraph/         The Graph subgraph
+\`\`\`
+
+## Getting started
+foundry installing
+\`\`\`bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+forge install
+forge build
+forge test -vvv
+\`\`\`
 

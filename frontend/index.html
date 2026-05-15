@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crypto Realm — DeFi GameFi Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <header class="flex justify-between items-center mb-12 border-b border-gray-700 pb-6">
+            <div>
+                <h1 class="text-4xl font-bold text-purple-400">Crypto Realm</h1>
+                <p class="text-gray-400 mt-2">GameFi economy on Base Sepolia</p>
+            </div>
+            <div class="flex flex-col items-end">
+                <button id="walletConnectButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                    Connect Wallet
+                </button>
+                <span id="walletStatusMessage" class="text-sm text-gray-400 mt-2"></span>
+            </div>
+        </header>
+
+        <div id="networkWarning" class="hidden bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded mb-6">
+            <strong>Wrong network detected.</strong>
+            <button id="networkSwitchButton" class="underline ml-2">Switch to Base Sepolia</button>
+        </div>
+
+        <div id="transactionStatus" class="hidden mb-6 px-4 py-3 rounded"></div>
+
+        <nav class="flex gap-2 mb-8 border-b border-gray-700">
+            <button class="tabButton active px-6 py-3 font-semibold" data-tab="marketplace">Marketplace</button>
+            <button class="tabButton px-6 py-3 font-semibold text-gray-400" data-tab="governance">Governance</button>
+            <button class="tabButton px-6 py-3 font-semibold text-gray-400" data-tab="vault">Vault</button>
+            <button class="tabButton px-6 py-3 font-semibold text-gray-400" data-tab="account">Account</button>
+        </nav>
+
+        <section id="marketplaceTab" class="tabContent">
+            <h2 class="text-2xl font-bold mb-4">Resource Marketplace</h2>
+            <div class="bg-gray-800 rounded-lg p-6 max-w-md">
+                <h3 class="text-lg font-semibold mb-4">Swap Resources</h3>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-2">From Resource</label>
+                    <select id="inputResourceSelector" class="w-full bg-gray-700 rounded px-3 py-2">
+                        <option value="1">WOOD</option>
+                        <option value="2">IRON</option>
+                        <option value="3">GEM</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-2">Amount</label>
+                    <input id="swapInputAmount" type="number" class="w-full bg-gray-700 rounded px-3 py-2" placeholder="100" />
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-2">To Resource</label>
+                    <select id="outputResourceSelector" class="w-full bg-gray-700 rounded px-3 py-2">
+                        <option value="2">IRON</option>
+                        <option value="1">WOOD</option>
+                        <option value="3">GEM</option>
+                    </select>
+                </div>
+                <button id="executeSwapButton" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded transition">
+                    Swap
+                </button>
+                <div id="poolReservesDisplay" class="mt-4 text-sm text-gray-400"></div>
+            </div>
+        </section>
+
+        <section id="governanceTab" class="tabContent hidden">
+            <h2 class="text-2xl font-bold mb-4">DAO Governance</h2>
+            <div class="bg-gray-800 rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Your Voting Power</h3>
+                <div id="votingPowerDisplay" class="text-3xl text-purple-400 font-bold">— REALM</div>
+                <button id="delegateButton" class="mt-4 bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">Delegate to Self</button>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-4">Active Proposals (from Subgraph)</h3>
+                <div id="proposalsList" class="space-y-3">
+                    <p class="text-gray-400">Loading proposals from The Graph...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="vaultTab" class="tabContent hidden">
+            <h2 class="text-2xl font-bold mb-4">NFT Rental Vault</h2>
+            <div class="bg-gray-800 rounded-lg p-6 max-w-md">
+                <h3 class="text-lg font-semibold mb-4">Deposit Collateral</h3>
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-400 mb-2">Amount (REALM)</label>
+                    <input id="vaultDepositAmount" type="number" class="w-full bg-gray-700 rounded px-3 py-2" placeholder="1000" />
+                </div>
+                <button id="vaultDepositButton" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded transition">
+                    Deposit
+                </button>
+                <div id="vaultSharesDisplay" class="mt-4 text-sm text-gray-400"></div>
+            </div>
+        </section>
+
+        <section id="accountTab" class="tabContent hidden">
+            <h2 class="text-2xl font-bold mb-4">Account Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm text-gray-400 mb-2">REALM Balance</h3>
+                    <div id="realmBalanceDisplay" class="text-2xl font-bold text-purple-400">—</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm text-gray-400 mb-2">Delegate Address</h3>
+                    <div id="delegateAddressDisplay" class="text-sm break-all">—</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm text-gray-400 mb-2">WOOD Balance</h3>
+                    <div id="woodBalanceDisplay" class="text-2xl font-bold">—</div>
+                </div>
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h3 class="text-sm text-gray-400 mb-2">IRON Balance</h3>
+                    <div id="ironBalanceDisplay" class="text-2xl font-bold">—</div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="mt-16 pt-6 border-t border-gray-700 text-center text-gray-500 text-sm">
+            <p>BCHT2 Final Project — Team: Asylbek, Bigali, Miras</p>
+        </footer>
+    </div>
+
+    <style>
+        .tabButton.active {
+            color: white;
+            border-bottom: 2px solid #a855f7;
+        }
+    </style>
+
+    <script src="./app.js"></script>
+</body>
+</html>
