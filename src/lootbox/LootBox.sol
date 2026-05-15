@@ -20,7 +20,7 @@ contract LootBox is AccessControl, ReentrancyGuard {
     IGameResourcesMinter public immutable gameResources;
 
     uint256 public lootBoxOpeningCostInWood;
-    uint32 public callbackGasLimit;
+    uint32 public immutable callbackGasLimit;
     uint256 public nextRequestId;
 
     uint256[5] public possibleRewardResourceIds;
@@ -63,11 +63,10 @@ contract LootBox is AccessControl, ReentrancyGuard {
     }
 
     function openLootBox() external nonReentrant returns (uint256 requestId) {
-        gameResources.burnResource(msg.sender, 1, lootBoxOpeningCostInWood);
-
         requestId = nextRequestId++;
         pendingRequests[requestId] = PendingLootRequest({ requester: msg.sender, fulfilled: false });
 
+        gameResources.burnResource(msg.sender, 1, lootBoxOpeningCostInWood);
         vrfCoordinator.requestRandomWords(requestId, callbackGasLimit);
 
         emit LootBoxRequested(requestId, msg.sender);
