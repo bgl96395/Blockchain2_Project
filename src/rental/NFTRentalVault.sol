@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { ERC4626 } from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IERC1155 } from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import { IERC1155Receiver } from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -11,6 +12,7 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol"
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 contract NFTRentalVault is ERC4626, ReentrancyGuard, AccessControl, IERC1155Receiver {
+    using SafeERC20 for IERC20;
     bytes32 public constant RENTAL_MANAGER_ROLE = keccak256("RENTAL_MANAGER_ROLE");
 
     IERC1155 public immutable gameResources;
@@ -56,7 +58,7 @@ contract NFTRentalVault is ERC4626, ReentrancyGuard, AccessControl, IERC1155Rece
     ) external onlyRole(RENTAL_MANAGER_ROLE) nonReentrant returns (uint256 rentalId) {
         if (collateralAmount == 0) revert InsufficientCollateral();
 
-        IERC20(asset()).transferFrom(renterAddress, address(this), collateralAmount);
+        IERC20(asset()).safeTransferFrom(renterAddress, address(this), collateralAmount);
 
         rentalId = nextRentalId++;
         rentalAgreements[rentalId] = RentalAgreement({
@@ -82,7 +84,7 @@ contract NFTRentalVault is ERC4626, ReentrancyGuard, AccessControl, IERC1155Rece
         agreement.isActive = false;
         totalCollateralLocked -= agreement.collateralStaked;
 
-        IERC20(asset()).transfer(agreement.renterAddress, agreement.collateralStaked);
+        IERC20(asset()).safeTransfer(agreement.renterAddress, agreement.collateralStaked);
 
         emit RentalEnded(rentalId, agreement.renterAddress);
     }
