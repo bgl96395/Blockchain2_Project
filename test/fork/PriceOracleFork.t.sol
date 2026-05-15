@@ -42,7 +42,7 @@ contract PriceOracleForkTest is Test {
 
     function test_Fork_ChainlinkFeedReturnsRecentData() public view {
         AggregatorV3Interface priceFeed = AggregatorV3Interface(BASE_SEPOLIA_ETH_USD_FEED);
-        (, , , uint256 updatedAt, ) = priceFeed.latestRoundData();
+        (,,, uint256 updatedAt,) = priceFeed.latestRoundData();
 
         assertGt(updatedAt, 0);
     }
