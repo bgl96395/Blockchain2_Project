@@ -104,14 +104,14 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         (uint256 actualSmallerAmount, uint256 actualLargerAmount) =
             _calculateOptimalDeposit(pool, amountForSmaller, amountForLarger, minSmaller, minLarger);
 
-        gameResources.safeTransferFrom(msg.sender, address(this), smallerId, actualSmallerAmount, "");
-        gameResources.safeTransferFrom(msg.sender, address(this), largerId, actualLargerAmount, "");
-
         liquidityTokensMinted =
             _mintLiquidityTokens(pool, poolKey, liquidityRecipient, actualSmallerAmount, actualLargerAmount);
 
         pool.firstResourceReserve += actualSmallerAmount;
         pool.secondResourceReserve += actualLargerAmount;
+
+        gameResources.safeTransferFrom(msg.sender, address(this), smallerId, actualSmallerAmount, "");
+        gameResources.safeTransferFrom(msg.sender, address(this), largerId, actualLargerAmount, "");
 
         (firstResourceAmountDeposited, secondResourceAmountDeposited) = firstResourceId < secondResourceId
             ? (actualSmallerAmount, actualLargerAmount)
@@ -264,14 +264,14 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         if (smallerAmountWithdrawn < minSmaller) revert InsufficientLiquidityBurned();
         if (largerAmountWithdrawn < minLarger) revert InsufficientLiquidityBurned();
 
+        (uint256 smallerId, uint256 largerId) = firstResourceId < secondResourceId
+            ? (firstResourceId, secondResourceId)
+            : (secondResourceId, firstResourceId);
+
         liquidityBalanceOf[poolKey][msg.sender] -= liquidityTokensToBurn;
         pool.totalLiquiditySupply -= liquidityTokensToBurn;
         pool.firstResourceReserve -= smallerAmountWithdrawn;
         pool.secondResourceReserve -= largerAmountWithdrawn;
-
-        (uint256 smallerId, uint256 largerId) = firstResourceId < secondResourceId
-            ? (firstResourceId, secondResourceId)
-            : (secondResourceId, firstResourceId);
 
         gameResources.safeTransferFrom(address(this), resourceRecipient, smallerId, smallerAmountWithdrawn, "");
         gameResources.safeTransferFrom(address(this), resourceRecipient, largerId, largerAmountWithdrawn, "");
@@ -318,9 +318,6 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
         if (outputResourceAmount < minimumOutputResourceAmount) revert InsufficientOutputAmount();
         if (outputResourceAmount >= outputReserve) revert InsufficientOutputAmount();
 
-        gameResources.safeTransferFrom(msg.sender, address(this), inputResourceId, inputResourceAmount, "");
-        gameResources.safeTransferFrom(address(this), outputRecipient, outputResourceId, outputResourceAmount, "");
-
         if (inputIsSmaller) {
             pool.firstResourceReserve += inputResourceAmount;
             pool.secondResourceReserve -= outputResourceAmount;
@@ -328,6 +325,9 @@ contract ResourceMarketplace is IResourceMarketplace, ReentrancyGuard, IERC1155R
             pool.secondResourceReserve += inputResourceAmount;
             pool.firstResourceReserve -= outputResourceAmount;
         }
+
+        gameResources.safeTransferFrom(msg.sender, address(this), inputResourceId, inputResourceAmount, "");
+        gameResources.safeTransferFrom(address(this), outputRecipient, outputResourceId, outputResourceAmount, "");
 
         uint256 newProduct = pool.firstResourceReserve * pool.secondResourceReserve;
         uint256 oldProduct = inputReserve * outputReserve;
