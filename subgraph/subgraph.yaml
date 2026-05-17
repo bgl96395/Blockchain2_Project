@@ -6,7 +6,7 @@ dataSources:
     name: ResourceMarketplace
     network: base-sepolia
     source:
-      address: "0x0000000000000000000000000000000000000000"
+      address: "0xd15e44a413e0f299ea7e3c9cd7be4c6b5e70cf26"
       abi: ResourceMarketplace
       startBlock: 0
     mapping:
@@ -30,7 +30,7 @@ dataSources:
     name: GameGovernor
     network: base-sepolia
     source:
-      address: "0x0000000000000000000000000000000000000000"
+      address: "0x9c8cb7209ac3153d43d6ab217c167f200dd9bb50"
       abi: GameGovernor
       startBlock: 0
     mapping:
