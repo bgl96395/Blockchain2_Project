@@ -176,16 +176,21 @@ async function loadActiveProposalsFromSubgraph() {
         }
 
         proposalsList.innerHTML = proposalArray
-            .map(
-                proposal => `
-            <div class="bg-gray-700 rounded p-4">
-                <div class="font-semibold">${proposal.description.slice(0, 80)}</div>
-                <div class="text-sm text-gray-400 mt-2">
-                    State: ${proposal.state} | For: ${proposal.forVotes} | Against: ${proposal.againstVotes}
-                </div>
-            </div>`
-            )
-            .join("");
+    .map(
+        proposal => `
+    <div class="bg-gray-700 rounded p-4">
+        <div class="font-semibold">${proposal.description.slice(0, 80)}</div>
+        <div class="text-sm text-gray-400 mt-2 mb-3">
+            State: ${proposal.state} | For: ${proposal.forVotes} | Against: ${proposal.againstVotes}
+        </div>
+        <div class="flex gap-2">
+            <button onclick="castProposalVote('${proposal.id}', 1)" class="bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm">Vote For</button>
+            <button onclick="castProposalVote('${proposal.id}', 0)" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm">Vote Against</button>
+            <button onclick="castProposalVote('${proposal.id}', 2)" class="bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded text-sm">Abstain</button>
+        </div>
+    </div>`
+    )
+    .join("");
     } catch (error) {
         proposalsList.innerHTML = '<p class="text-gray-400">Subgraph not deployed yet.</p>';
     }
@@ -278,6 +283,29 @@ async function depositIntoVault() {
         showTransactionMessage(`Deposit failed: ${error.reason || error.message}`, true);
     }
 }
+
+async function castProposalVote(proposalId, voteOption) {
+    if (!activeSigner) {
+        showTransactionMessage("Connect your wallet first.", true);
+        return;
+    }
+    try {
+        const governorContract = new ethers.Contract(
+            CONTRACT_ADDRESSES.governor,
+            ["function castVote(uint256 proposalId, uint8 support) returns (uint256)"],
+            activeSigner
+        );
+        showTransactionMessage("Submitting vote...", false);
+        const tx = await governorContract.castVote(proposalId, voteOption);
+        await tx.wait();
+        showTransactionMessage("Vote cast successfully.", false);
+        await loadActiveProposalsFromSubgraph();
+    } catch (error) {
+        showTransactionMessage(`Vote failed: ${error.reason || error.message}`, true);
+    }
+}
+
+window.castProposalVote = castProposalVote;
 
 if (typeof window.ethereum !== "undefined") {
     window.ethereum.on("chainChanged", () => window.location.reload());
