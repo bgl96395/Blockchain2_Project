@@ -1,0 +1,103 @@
+'forge clean' running (wd: C:\Users\user\Desktop\Blockchain2\final\defi-superapp-day1\defi-superapp)
+'forge config --json' running
+'forge build --build-info --skip ./test/** ./script/** --force' running (wd: C:\Users\user\Desktop\Blockchain2\final\defi-superapp-day1\defi-superapp)
+INFO:Detectors:
+Detector: arbitrary-send-erc20
+NFTRentalVault.createRental(address,uint256,uint256,uint256,uint256) (src/rental/NFTRentalVault.sol#49-76) uses arbitrary from in transferFrom: IERC20(asset()).safeTransferFrom(renterAddress,address(this),collateralAmount) (src/rental/NFTRentalVault.sol#59-61)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#arbitrary-from-in-transferfrom
+INFO:Detectors:
+Detector: reentrancy-eth
+Reentrancy in VulnerableBank.withdrawEther() (src/vulnerabilities/VulnerableBank.sol#15-23):
+	External calls:
+	- (success,None) = msg.sender.call{value: callerBalance}() (src/vulnerabilities/VulnerableBank.sol#18-20)
+	State variables written after the call(s):
+	- depositorBalances[msg.sender] = 0 (src/vulnerabilities/VulnerableBank.sol#21-23)
+	VulnerableBank.depositorBalances (src/vulnerabilities/VulnerableBank.sol#7-8) can be used in cross function reentrancies:
+	- VulnerableBank.depositEther() (src/vulnerabilities/VulnerableBank.sol#8-11)
+	- VulnerableBank.depositorBalances (src/vulnerabilities/VulnerableBank.sol#7-8)
+	- VulnerableBank.withdrawEther() (src/vulnerabilities/VulnerableBank.sol#15-23)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-1
+INFO:Detectors:
+Detector: tx-origin
+VulnerableAdmin.setCriticalValue(uint256) (src/vulnerabilities/VulnerableAdmin.sol#18-21) uses tx.origin for authorization: require(bool,string)(tx.origin == administrator,Not admin) (src/vulnerabilities/VulnerableAdmin.sol#19-20)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin
+INFO:Detectors:
+Detector: unused-return
+LootBox.openLootBox() (src/lootbox/LootBox.sol#62-70) ignores return value by vrfCoordinator.requestRandomWords(requestId,callbackGasLimit) (src/lootbox/LootBox.sol#69-70)
+PriceOracleAdapter.getLatestPriceWithStalenessCheck(address) (src/oracle/PriceOracleAdapter.sol#36-57) ignores return value by (roundId,rawPrice,None,lastUpdatedTimestamp,answeredInRound) = priceFeed.latestRoundData() (src/oracle/PriceOracleAdapter.sol#45-47)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+INFO:Detectors:
+Detector: missing-zero-check
+MarketplaceFactory.constructor(address).administratorAddress (src/factory/MarketplaceFactory.sol#18-20) lacks a zero-check on :
+		- factoryAdministrator = administratorAddress (src/factory/MarketplaceFactory.sol#20-21)
+VulnerableAdmin.constructor(address).initialAdministrator (src/vulnerabilities/VulnerableAdmin.sol#11) lacks a zero-check on :
+		- administrator = initialAdministrator (src/vulnerabilities/VulnerableAdmin.sol#11-12)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+INFO:Detectors:
+Detector: reentrancy-events
+Reentrancy in LootBox.fulfillRandomWords(uint256,uint256) (src/lootbox/LootBox.sol#70-87):
+	External calls:
+	- gameResources.mintResource(request.requester,awardedResourceId,1) (src/lootbox/LootBox.sol#84)
+	Event emitted after the call(s):
+	- LootBoxFulfilled(requestId,request.requester,awardedResourceId) (src/lootbox/LootBox.sol#86)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-4
+INFO:Detectors:
+Detector: timestamp
+ResourceMarketplace.addLiquidity(uint256,uint256,uint256,uint256,uint256,uint256,address,uint256) (src/marketplace/ResourceMarketplace.sol#59-124) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > transactionDeadline (src/marketplace/ResourceMarketplace.sol#77-78)
+ResourceMarketplace.removeLiquidity(uint256,uint256,uint256,uint256,uint256,address,uint256) (src/marketplace/ResourceMarketplace.sol#223-281) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > transactionDeadline (src/marketplace/ResourceMarketplace.sol#237-238)
+ResourceMarketplace.swapExactInputForOutput(uint256,uint256,uint256,uint256,address,uint256) (src/marketplace/ResourceMarketplace.sol#281-332) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > transactionDeadline (src/marketplace/ResourceMarketplace.sol#294-295)
+PriceOracleAdapter.getLatestPriceWithStalenessCheck(address) (src/oracle/PriceOracleAdapter.sol#36-57) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp - lastUpdatedTimestamp > maximumStalenessSeconds (src/oracle/PriceOracleAdapter.sol#51-52)
+NFTRentalVault.endRental(uint256) (src/rental/NFTRentalVault.sol#76-87) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < agreement.rentalEndTimestamp (src/rental/NFTRentalVault.sol#80-81)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+INFO:Detectors:
+Detector: assembly
+MarketplaceFactory.deployMarketplaceWithCreate2(address,bytes32) (src/factory/MarketplaceFactory.sol#34-53) uses assembly
+	- INLINE ASM (src/factory/MarketplaceFactory.sol#44-48)
+MarketplaceMath.getAmountOutYulOptimized(uint256,uint256,uint256) (src/libraries/MarketplaceMath.sol#19-40) uses assembly
+	- INLINE ASM (src/libraries/MarketplaceMath.sol#25-40)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+INFO:Detectors:
+Detector: low-level-calls
+Low level call in FixedBank.withdrawEther() (src/vulnerabilities/FixedBank.sol#17-25):
+	- (success,None) = msg.sender.call{value: callerBalance}() (src/vulnerabilities/FixedBank.sol#22-24)
+Low level call in VulnerableBank.withdrawEther() (src/vulnerabilities/VulnerableBank.sol#15-23):
+	- (success,None) = msg.sender.call{value: callerBalance}() (src/vulnerabilities/VulnerableBank.sol#18-20)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Detectors:
+Detector: missing-inheritance
+GameResources (src/resources/GameResources.sol#6-63) should inherit from IGameResourcesMintable (src/crafting/CraftingStation.sol#8-12)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-inheritance
+INFO:Detectors:
+Detector: too-many-digits
+MarketplaceFactory.deployMarketplaceWithCreate2(address,bytes32) (src/factory/MarketplaceFactory.sol#34-53) uses literals with too many digits:
+	- creationBytecode = abi.encodePacked(type()(ResourceMarketplace).creationCode,abi.encode(gameResourcesAddress)) (src/factory/MarketplaceFactory.sol#41-44)
+MarketplaceFactory.predictMarketplaceAddress(address,bytes32) (src/factory/MarketplaceFactory.sol#53-66) uses literals with too many digits:
+	- creationBytecode = abi.encodePacked(type()(ResourceMarketplace).creationCode,abi.encode(gameResourcesAddress)) (src/factory/MarketplaceFactory.sol#58-62)
+MarketplaceMath.getAmountOutYulOptimized(uint256,uint256,uint256) (src/libraries/MarketplaceMath.sol#19-40) uses literals with too many digits:
+	- mstore(uint256,uint256)(0x00,0x098fb56100000000000000000000000000000000000000000000000000000000) (src/libraries/MarketplaceMath.sol#28-29)
+MarketplaceMath.getAmountOutYulOptimized(uint256,uint256,uint256) (src/libraries/MarketplaceMath.sol#19-40) uses literals with too many digits:
+	- mstore(uint256,uint256)(0x00,0x5b6c10ab00000000000000000000000000000000000000000000000000000000) (src/libraries/MarketplaceMath.sol#32-33)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#too-many-digits
+INFO:Detectors:
+Detector: unindexed-event-address
+Event MarketplaceV1.ProtocolFeeRecipientUpdated(address,address) (src/upgradeable/MarketplaceV1.sol#15-16) has address parameters but no indexed parameters
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unindexed-event-address-parameters
+INFO:Detectors:
+Detector: constable-states
+MarketplaceV1.totalProtocolFeesCollected (src/upgradeable/MarketplaceV1.sol#10-11) should be constant 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-constant
+INFO:Detectors:
+Detector: immutable-states
+VulnerableAdmin.administrator (src/vulnerabilities/VulnerableAdmin.sol#7-8) should be immutable 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Slither:. analyzed (100 contracts with 101 detectors), 25 result(s) found
