@@ -22,7 +22,7 @@ contract GameGovernor is
 {
     constructor(IVotes governanceTokenAddress, TimelockController timelockAddress)
         Governor("CryptoRealmGovernor")
-        GovernorSettings(7200, 50_400, 1)
+        GovernorSettings(7200, 50_400, 10_000 ether)
         GovernorVotes(governanceTokenAddress)
         GovernorVotesQuorumFraction(4)
         GovernorTimelockControl(timelockAddress)

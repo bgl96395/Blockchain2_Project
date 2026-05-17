@@ -52,7 +52,7 @@ contract GovernanceTest is Test {
     function test_GovernorParameters_MatchSpecification() public view {
         assertEq(governor.votingDelay(), 7200);
         assertEq(governor.votingPeriod(), 50_400);
-        assertEq(governor.proposalThreshold(), 1);
+        assertEq(governor.proposalThreshold(), 10_000 ether);
         assertEq(governor.quorumNumerator(), 4);
     }
 
