@@ -1,0 +1,27 @@
+Warning: This is a nightly build of Foundry. It is recommended to use the latest stable version. To mute this warning set `FOUNDRY_DISABLE_NIGHTLY_WARNING` in your environment. 
+
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  ===========================================
+  POST-DEPLOYMENT VERIFICATION SCRIPT
+  Network: Base Sepolia (Chain ID 84532)
+  ===========================================
+  PASS: GameToken.name() == 'Crypto Realm Token'
+  PASS: GameToken.symbol() == 'REALM'
+  PASS: GameToken.maximumTokenSupply == 1M
+  PASS: GameTimelock.getMinDelay() == 2 days
+  PASS: GameGovernor.votingDelay() == 7200 blocks
+  PASS: GameGovernor.votingPeriod() == 50400 blocks
+  PASS: GameGovernor.timelock() == GameTimelock
+  PASS: GameResources.MINTER_ROLE exists
+  PASS: ResourceMarketplace.gameResources() == GameResources
+  PASS: PriceOracleAdapter.maximumStalenessSeconds() == 3600
+  PASS: GameTimelock holds DEFAULT_ADMIN_ROLE on GameToken
+  PASS: GameTimelock holds DEFAULT_ADMIN_ROLE on GameResources
+  ===========================================
+  RESULTS
+  Passed: 12
+  Failed: 0
+  ===========================================
