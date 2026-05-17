@@ -2,11 +2,11 @@ const BASE_SEPOLIA_CHAIN_ID = 84532;
 const SUBGRAPH_ENDPOINT_URL = "https://api.studio.thegraph.com/query/REPLACE/crypto-realm/v0.0.1";
 
 const CONTRACT_ADDRESSES = {
-    gameToken: "0x0000000000000000000000000000000000000000",
-    gameResources: "0x0000000000000000000000000000000000000000",
-    resourceMarketplace: "0x0000000000000000000000000000000000000000",
-    governor: "0x0000000000000000000000000000000000000000",
-    rentalVault: "0x0000000000000000000000000000000000000000"
+    gameToken: "0x169ae7e53e9dad50edbbb07570d2cdf79c3de1b9",
+    gameResources: "0x4ff5ff07e6a926c5eb6ca90adfa7acd48ff68b48",
+    resourceMarketplace: "0xd15e44a413e0f299ea7e3c9cd7be4c6b5e70cf26",
+    governor: "0x9c8cb7209ac3153d43d6ab217c167f200dd9bb50",
+    rentalVault: "0x9a14c5fb7479c1395473ae171fc4229074b4d939"
 };
 
 const GAME_TOKEN_ABI = [
