@@ -4,6 +4,8 @@ pragma solidity 0.8.24;
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
+/// @title PriceOracleAdapter
+/// @notice Adapter contract for retrieving and validating Chainlink price feeds.
 contract PriceOracleAdapter is AccessControl {
     bytes32 public constant FEED_MANAGER_ROLE = keccak256("FEED_MANAGER_ROLE");
 
@@ -19,23 +21,35 @@ contract PriceOracleAdapter is AccessControl {
     event PriceFeedRegistered(address indexed assetAddress, address indexed priceFeedAddress);
     event MaximumStalenessUpdated(uint256 oldStaleness, uint256 newStaleness);
 
+    /// @notice Initializes the oracle adapter contract.
+    /// @param initialMaximumStaleness Maximum allowed staleness for price feed updates.
+    /// @param oracleAdministrator Address receiving admin and feed manager roles.
     constructor(uint256 initialMaximumStaleness, address oracleAdministrator) {
         maximumStalenessSeconds = initialMaximumStaleness;
         _grantRole(DEFAULT_ADMIN_ROLE, oracleAdministrator);
         _grantRole(FEED_MANAGER_ROLE, oracleAdministrator);
     }
 
+    /// @notice Registers a Chainlink price feed for an asset.
+    /// @param assetAddress Address of the tracked asset.
+    /// @param priceFeedAddress Address of the Chainlink price feed.
     function registerPriceFeed(address assetAddress, address priceFeedAddress) external onlyRole(FEED_MANAGER_ROLE) {
         priceFeedForAsset[assetAddress] = AggregatorV3Interface(priceFeedAddress);
         emit PriceFeedRegistered(assetAddress, priceFeedAddress);
     }
 
+    /// @notice Updates the maximum allowed staleness period.
+    /// @param newMaximumStaleness New staleness threshold in seconds.
     function setMaximumStaleness(uint256 newMaximumStaleness) external onlyRole(FEED_MANAGER_ROLE) {
         uint256 oldStaleness = maximumStalenessSeconds;
         maximumStalenessSeconds = newMaximumStaleness;
         emit MaximumStalenessUpdated(oldStaleness, newMaximumStaleness);
     }
 
+    /// @notice Returns the latest validated asset price.
+    /// @dev Reverts if feed is stale, incomplete, or returns invalid data.
+    /// @param assetAddress Address of the asset being queried.
+    /// @return priceScaledToEighteenDecimals Asset price normalized to 18 decimals.
     function getLatestPriceWithStalenessCheck(address assetAddress)
         external
         view
@@ -57,6 +71,8 @@ contract PriceOracleAdapter is AccessControl {
         priceScaledToEighteenDecimals = uint256(rawPrice) * (10 ** (18 - feedDecimals));
     }
 
+    /// @notice Returns the currently configured staleness threshold.
+    /// @return Maximum allowed staleness in seconds.
     function getMaximumStalenessSeconds() external view returns (uint256) {
         return maximumStalenessSeconds;
     }
