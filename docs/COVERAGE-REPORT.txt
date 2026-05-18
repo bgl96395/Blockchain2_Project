@@ -1,0 +1,243 @@
+Warning: This is a nightly build of Foundry. It is recommended to use the latest stable version. To mute this warning set `FOUNDRY_DISABLE_NIGHTLY_WARNING` in your environment. 
+
+Warning: `--ir-minimum` enables `viaIR` with minimum optimization, which can result in inaccurate source mappings.
+Only use this flag as a workaround if you are experiencing "stack too deep" errors.
+Note that `viaIR` is production ready since Solidity 0.8.13 and above.
+See more: https://book.getfoundry.sh/guides/best-practices/stack-too-deep
+Compiling 137 files with Solc 0.8.24
+Solc 0.8.24 finished in 56.58s
+Compiler run successful!
+Analysing contracts...
+Running tests...
+
+Ran 2 tests for test/vulnerabilities/ReentrancyCaseStudy.t.sol:ReentrancyCaseStudyTest
+[PASS] test_After_FixedBank_AttackerCannotDrain() (gas: 343305)
+[PASS] test_Before_VulnerableBank_AttackerDrainsBeyondDeposit() (gas: 478292)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 14.25ms (3.82ms CPU time)
+
+Ran 6 tests for test/unit/MarketplaceFactory.t.sol:MarketplaceFactoryTest
+[PASS] test_DeployWithCreate2_DifferentSaltsProduceDifferentAddresses() (gas: 4829349)
+[PASS] test_DeployWithCreate2_MatchesPredictedAddress() (gas: 2470481)
+[PASS] test_DeployWithCreate2_RevertWhen_CallerUnauthorized() (gas: 14653)
+[PASS] test_DeployWithCreate_AssignsValidAddress() (gas: 2427173)
+[PASS] test_DeployWithCreate_RevertWhen_AlreadyExists() (gas: 2426372)
+[PASS] test_DeployWithCreate_RevertWhen_CallerUnauthorized() (gas: 13938)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 21.28ms (17.84ms CPU time)
+
+Ran 6 tests for test/unit/CraftingStation.t.sol:CraftingStationTest
+[PASS] test_CraftRecipe_ConsumesInputsAndProducesOutput() (gas: 333788)
+[PASS] test_CraftRecipe_RevertWhen_RecipeDoesNotExist() (gas: 34967)
+[PASS] test_CraftRecipe_RevertWhen_RecipeNotActive() (gas: 198505)
+[PASS] test_RegisterRecipe_RevertWhen_CallerUnauthorized() (gas: 16341)
+[PASS] test_RegisterRecipe_StoresRecipeData() (gas: 198868)
+[PASS] test_SetRecipeActiveStatus_AdminCanToggle() (gas: 190543)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 22.90ms (10.14ms CPU time)
+
+Ran 5 tests for test/unit/ResourceMarketplace.t.sol:ResourceMarketplaceTest
+[PASS] test_AddLiquidity_FirstProviderReceivesSquareRootMinusMinimum() (gas: 250055)
+[PASS] test_AddLiquidity_RevertWhen_DeadlineExpired() (gas: 24851)
+[PASS] test_RemoveLiquidity_ReturnsProportionalAmounts() (gas: 275800)
+[PASS] test_Swap_OutputAmountMatchesConstantProductFormula() (gas: 311238)
+[PASS] test_Swap_RevertWhen_PoolDoesNotExist() (gas: 26277)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 22.42ms (11.53ms CPU time)
+
+Ran 10 tests for test/unit/PriceOracleAdapter.t.sol:PriceOracleAdapterTest
+[PASS] test_GetLatestPrice_RevertWhen_DataIsStale() (gas: 61681)
+[PASS] test_GetLatestPrice_RevertWhen_FeedNotConfigured() (gas: 13725)
+[PASS] test_GetLatestPrice_RevertWhen_PriceIsNegative() (gas: 66578)
+[PASS] test_GetLatestPrice_RevertWhen_PriceIsZeroOrNegative() (gas: 61936)
+[PASS] test_GetLatestPrice_ScalesEightDecimalsToEighteen() (gas: 63780)
+[PASS] test_PriceUpdate_AfterStalenessReverts_FreshDataPasses() (gas: 77006)
+[PASS] test_RegisterPriceFeed_RevertWhen_CallerUnauthorized() (gas: 17730)
+[PASS] test_RegisterPriceFeed_StoresFeedAddress() (gas: 45623)
+[PASS] test_SetMaximumStaleness_RevertWhen_CallerUnauthorized() (gas: 14960)
+[PASS] test_SetMaximumStaleness_UpdatesValue() (gas: 22829)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 23.98ms (12.49ms CPU time)
+
+Ran 6 tests for test/unit/MarketplaceUpgrade.t.sol:MarketplaceUpgradeTest
+[PASS] test_GetContractVersion_ReturnsV1() (gas: 18602)
+[PASS] test_Initialize_SetsInitialState() (gas: 24417)
+[PASS] test_SetProtocolFee_OnlyOwnerCanUpdate() (gas: 28463)
+[PASS] test_SetProtocolFee_RevertWhen_CallerNotOwner() (gas: 19345)
+[PASS] test_UpgradeToV2_PreservesStateAndAddsFunctionality() (gas: 1496196)
+[PASS] test_UpgradeToV2_RevertWhen_CallerNotOwner() (gas: 1434770)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 23.60ms (12.60ms CPU time)
+
+Ran 7 tests for test/unit/GameResources.t.sol:GameResourcesTest
+[PASS] test_BurnResource_ReducesBalance() (gas: 74348)
+[PASS] test_MintResource_AssignsCorrectBalance() (gas: 62089)
+[PASS] test_MintResource_RevertWhen_CallerLacksMinterRole() (gas: 21407)
+[PASS] test_MintResource_RevertWhen_InvalidResourceId() (gas: 22406)
+[PASS] test_MintResource_RevertWhen_ZeroAmount() (gas: 24184)
+[PASS] test_Pause_BlocksMinting() (gas: 48041)
+[PASS] test_Unpause_RestoresMinting() (gas: 75627)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 25.38ms (9.24ms CPU time)
+
+Ran 5 tests for test/unit/Governance.t.sol:GovernanceTest
+[PASS] test_FullProposalLifecycle_ProposeVoteQueueExecute() (gas: 579542)
+[PASS] test_GovernorParameters_MatchSpecification() (gas: 24046)
+[PASS] test_Mint_RevertWhen_ExceedsMaximumSupply() (gas: 18132)
+[PASS] test_Token_HasCorrectMetadata() (gas: 25626)
+[PASS] test_VotingPower_MatchesDelegatedBalance() (gas: 21431)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 27.39ms (11.60ms CPU time)
+
+Ran 3 tests for test/vulnerabilities/AccessControlCaseStudy.t.sol:AccessControlCaseStudyTest
+[PASS] test_After_FixedAdmin_AccessControlBlocksProxyAttack() (gas: 30682)
+[PASS] test_After_FixedAdmin_LegitimateAdminCanSetValue() (gas: 40540)
+[PASS] test_Before_VulnerableAdmin_TxOriginAllowsProxyAttack() (gas: 50203)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 153.66ms (6.51ms CPU time)
+
+Ran 7 tests for test/unit/MarketplaceMath.t.sol:MarketplaceMathTest
+[PASS] testFuzz_BothImplementations_AlwaysEqual(uint256,uint256,uint256) (runs: 256, μ: 7031, ~: 6475)
+[PASS] testFuzz_OutputAlwaysLessThanOutputReserve(uint256,uint256,uint256) (runs: 256, μ: 6716, ~: 6174)
+[PASS] test_BothImplementations_ProduceIdenticalResults() (gas: 2528)
+[PASS] test_GetAmountOutPureSolidity_BasicCalculation() (gas: 2656)
+[PASS] test_GetAmountOutYulOptimized_BasicCalculation() (gas: 1407)
+[PASS] test_LargeAmounts_ProduceIdenticalResults() (gas: 2759)
+[PASS] test_SmallAmounts_ProduceIdenticalResults() (gas: 2506)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 326.94ms (182.61ms CPU time)
+
+Ran 9 tests for test/unit/LootBox.t.sol:LootBoxTest
+[PASS] test_Constructor_SetsInitialState() (gas: 18549)
+[PASS] test_FulfillRandomWords_RevertWhen_NotCoordinator() (gas: 12537)
+[PASS] test_OpenLootBox_BurnsWoodAndCreatesRequest() (gas: 113059)
+[PASS] test_OpenLootBox_FulfilledImmediately_AwardsCommonResource() (gas: 133071)
+[PASS] test_OpenLootBox_FulfilledWithRareRoll_AwardsRareResource() (gas: 165295)
+[PASS] test_SetLootBoxCost_AdminCanModify() (gas: 21350)
+[PASS] test_UpdateDropProbabilities_AdminCanModify() (gas: 54986)
+[PASS] test_UpdateDropProbabilities_RevertWhen_AllZeroWeights() (gas: 20118)
+[PASS] test_UpdateDropProbabilities_RevertWhen_CallerUnauthorized() (gas: 16652)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 348.21ms (13.93ms CPU time)
+
+Ran 6 tests for test/fuzz/GovernanceFuzz.t.sol:GovernanceFuzzTest
+[PASS] testFuzz_Delegate_VotingPowerMatchesBalance(address,uint256) (runs: 256, μ: 206102, ~: 205340)
+[PASS] testFuzz_Mint_BalanceIncreasesByMintedAmount(address,uint256) (runs: 256, μ: 127096, ~: 126334)
+[PASS] testFuzz_Mint_RevertWhen_CallerLacksMinterRole(address,uint256) (runs: 256, μ: 18577, ~: 17815)
+[PASS] testFuzz_Mint_RevertWhen_ExceedsMaxSupply(uint256) (runs: 256, μ: 20480, ~: 20873)
+[PASS] testFuzz_Transfer_PreservesTotalSupply(address,address,uint256) (runs: 256, μ: 149099, ~: 148854)
+[PASS] testFuzz_VotingPower_PreservedAfterTransferIfBothDelegated(uint256) (runs: 256, μ: 331945, ~: 331182)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 349.19ms (1.01s CPU time)
+
+Ran 4 tests for test/fuzz/ResourceMarketplaceFuzz.t.sol:ResourceMarketplaceFuzzTest
+[PASS] testFuzz_AddLiquidity_FirstDepositMintsExpectedShares(uint256,uint256) (runs: 256, μ: 260720, ~: 260077)
+[PASS] testFuzz_RemoveLiquidity_ReturnsNoMoreThanDeposited(uint256) (runs: 256, μ: 281721, ~: 285578)
+[PASS] testFuzz_Swap_KInvariantNeverDecreases(uint256) (runs: 256, μ: 318828, ~: 319462)
+[PASS] testFuzz_Swap_OutputAlwaysLessThanReserve(uint256) (runs: 256, μ: 313845, ~: 314479)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 351.40ms (1.20s CPU time)
+
+Ran 3 tests for test/fork/PriceOracleFork.t.sol:PriceOracleForkTest
+[PASS] test_Fork_ChainlinkFeedHasCorrectDecimals() (gas: 10132)
+[PASS] test_Fork_ChainlinkFeedReturnsPrice() (gas: 67594)
+[PASS] test_Fork_ChainlinkFeedReturnsRecentData() (gas: 20578)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 2.87s (3.23s CPU time)
+
+Ran 5 tests for test/invariant/ResourceMarketplaceInvariant.t.sol:ResourceMarketplaceInvariantTest
+[PASS] invariant_HandlerStateIsBounded() (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------------+---------------------+-------+---------+----------╮
+| Contract           | Selector            | Calls | Reverts | Discards |
++=======================================================================+
+| MarketplaceHandler | addLiquidityHandler | 63858 | 0       | 0        |
+|--------------------+---------------------+-------+---------+----------|
+| MarketplaceHandler | swapHandler         | 64142 | 0       | 0        |
+╰--------------------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_KProductNeverDecreasesUnexpectedly() (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------------+---------------------+-------+---------+----------╮
+| Contract           | Selector            | Calls | Reverts | Discards |
++=======================================================================+
+| MarketplaceHandler | addLiquidityHandler | 63858 | 0       | 0        |
+|--------------------+---------------------+-------+---------+----------|
+| MarketplaceHandler | swapHandler         | 64142 | 0       | 0        |
+╰--------------------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_OperationCountersAreConsistent() (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------------+---------------------+-------+---------+----------╮
+| Contract           | Selector            | Calls | Reverts | Discards |
++=======================================================================+
+| MarketplaceHandler | addLiquidityHandler | 63858 | 0       | 0        |
+|--------------------+---------------------+-------+---------+----------|
+| MarketplaceHandler | swapHandler         | 64142 | 0       | 0        |
+╰--------------------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_ReservesMatchContractBalance() (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------------+---------------------+-------+---------+----------╮
+| Contract           | Selector            | Calls | Reverts | Discards |
++=======================================================================+
+| MarketplaceHandler | addLiquidityHandler | 63858 | 0       | 0        |
+|--------------------+---------------------+-------+---------+----------|
+| MarketplaceHandler | swapHandler         | 64142 | 0       | 0        |
+╰--------------------+---------------------+-------+---------+----------╯
+
+[PASS] invariant_TotalLiquiditySupplyNonZeroAfterFirstDeposit() (runs: 256, calls: 128000, reverts: 0)
+
+╭--------------------+---------------------+-------+---------+----------╮
+| Contract           | Selector            | Calls | Reverts | Discards |
++=======================================================================+
+| MarketplaceHandler | addLiquidityHandler | 63858 | 0       | 0        |
+|--------------------+---------------------+-------+---------+----------|
+| MarketplaceHandler | swapHandler         | 64142 | 0       | 0        |
+╰--------------------+---------------------+-------+---------+----------╯
+
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 101.10s (484.66s CPU time)
+
+Ran 15 test suites in 101.12s (105.68s CPU time): 84 tests passed, 0 failed, 0 skipped (84 total tests)
+
+╭---------------------------------------------------+------------------+------------------+----------------+-----------------╮
+| File                                              | % Lines          | % Statements     | % Branches     | % Funcs         |
++============================================================================================================================+
+| script/Deploy.s.sol                               | 0.00% (0/46)     | 0.00% (0/61)     | 100.00% (0/0)  | 0.00% (0/1)     |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| script/PostDeployVerify.s.sol                     | 0.00% (0/51)     | 0.00% (0/51)     | 0.00% (0/4)    | 0.00% (0/8)     |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/crafting/CraftingStation.sol                  | 74.19% (23/31)   | 71.88% (23/32)   | 40.00% (2/5)   | 57.14% (4/7)    |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/factory/MarketplaceFactory.sol                | 92.00% (23/25)   | 88.46% (23/26)   | 75.00% (3/4)   | 100.00% (5/5)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/governance/GameGovernor.sol                   | 80.00% (16/20)   | 78.95% (15/19)   | 100.00% (0/0)  | 80.00% (8/10)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/governance/GameToken.sol                      | 81.82% (9/11)    | 81.82% (9/11)    | 100.00% (1/1)  | 75.00% (3/4)    |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/libraries/MarketplaceMath.sol                 | 44.44% (8/18)    | 47.83% (11/23)   | 0.00% (0/4)    | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/lootbox/LootBox.sol                           | 95.24% (40/42)   | 95.45% (42/44)   | 75.00% (3/4)   | 100.00% (6/6)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/marketplace/ResourceMarketplace.sol           | 91.94% (114/124) | 83.87% (130/155) | 26.92% (7/26)  | 73.33% (11/15)  |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/mocks/MockAggregatorV3.sol                    | 61.90% (13/21)   | 69.23% (9/13)    | 100.00% (0/0)  | 50.00% (4/8)    |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/mocks/MockGameResources.sol                   | 100.00% (2/2)    | 100.00% (1/1)    | 100.00% (0/0)  | 100.00% (1/1)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/mocks/MockVRFCoordinator.sol                  | 100.00% (7/7)    | 100.00% (4/4)    | 100.00% (0/0)  | 100.00% (3/3)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/oracle/PriceOracleAdapter.sol                 | 100.00% (24/24)  | 95.83% (23/24)   | 75.00% (3/4)   | 100.00% (5/5)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/rental/NFTRentalVault.sol                     | 0.00% (0/26)     | 0.00% (0/26)     | 0.00% (0/3)    | 0.00% (0/6)     |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/resources/GameResources.sol                   | 66.67% (14/21)   | 71.43% (15/21)   | 66.67% (2/3)   | 71.43% (5/7)    |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/upgradeable/MarketplaceV1.sol                 | 62.50% (15/24)   | 47.62% (10/21)   | 0.00% (0/4)    | 71.43% (5/7)    |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/upgradeable/MarketplaceV2.sol                 | 100.00% (5/5)    | 100.00% (3/3)    | 100.00% (0/0)  | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/vulnerabilities/FixedAdmin.sol                | 100.00% (5/5)    | 100.00% (3/3)    | 100.00% (0/0)  | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/vulnerabilities/FixedBank.sol                 | 100.00% (8/8)    | 100.00% (7/7)    | 0.00% (0/4)    | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/vulnerabilities/VulnerableAdmin.sol           | 100.00% (5/5)    | 100.00% (3/3)    | 0.00% (0/2)    | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| src/vulnerabilities/VulnerableBank.sol            | 100.00% (8/8)    | 100.00% (7/7)    | 0.00% (0/4)    | 100.00% (2/2)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| test/invariant/ResourceMarketplaceInvariant.t.sol | 100.00% (23/23)  | 100.00% (22/22)  | 100.00% (2/2)  | 100.00% (3/3)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| test/unit/LootBox.t.sol                           | 100.00% (7/7)    | 100.00% (4/4)    | 0.00% (0/2)    | 100.00% (3/3)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| test/vulnerabilities/AccessControlCaseStudy.t.sol | 100.00% (7/7)    | 100.00% (4/4)    | 100.00% (0/0)  | 100.00% (3/3)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| test/vulnerabilities/ReentrancyCaseStudy.t.sol    | 100.00% (17/17)  | 100.00% (13/13)  | 100.00% (2/2)  | 100.00% (6/6)   |
+|---------------------------------------------------+------------------+------------------+----------------+-----------------|
+| Total                                             | 67.99% (393/578) | 63.71% (381/598) | 32.05% (25/78) | 72.50% (87/120) |
+╰---------------------------------------------------+------------------+------------------+----------------+-----------------╯

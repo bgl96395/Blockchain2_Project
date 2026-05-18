@@ -1,0 +1,116 @@
+Warning: This is a nightly build of Foundry. It is recommended to use the latest stable version. To mute this warning set `FOUNDRY_DISABLE_NIGHTLY_WARNING` in your environment. 
+
+Compiling 35 files with Solc 0.8.24
+Solc 0.8.24 finished in 174.40s
+Compiler run successful!
+
+Ran 2 tests for test/vulnerabilities/ReentrancyCaseStudy.t.sol:ReentrancyCaseStudyTest
+[PASS] test_After_FixedBank_AttackerCannotDrain() (gas: 284518)
+[PASS] test_Before_VulnerableBank_AttackerDrainsBeyondDeposit() (gas: 324379)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 21.10ms (5.42ms CPU time)
+
+Ran 3 tests for test/vulnerabilities/AccessControlCaseStudy.t.sol:AccessControlCaseStudyTest
+[PASS] test_After_FixedAdmin_AccessControlBlocksProxyAttack() (gas: 54721)
+[PASS] test_After_FixedAdmin_LegitimateAdminCanSetValue() (gas: 59429)
+[PASS] test_Before_VulnerableAdmin_TxOriginAllowsProxyAttack() (gas: 76097)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 25.81ms (7.61ms CPU time)
+
+Ran 6 tests for test/unit/MarketplaceUpgrade.t.sol:MarketplaceUpgradeTest
+[PASS] test_GetContractVersion_ReturnsV1() (gas: 14990)
+[PASS] test_Initialize_SetsInitialState() (gas: 32814)
+[PASS] test_SetProtocolFee_OnlyOwnerCanUpdate() (gas: 50637)
+[PASS] test_SetProtocolFee_RevertWhen_CallerNotOwner() (gas: 37154)
+[PASS] test_UpgradeToV2_PreservesStateAndAddsFunctionality() (gas: 891533)
+[PASS] test_UpgradeToV2_RevertWhen_CallerNotOwner() (gas: 758140)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 19.81ms (7.66ms CPU time)
+
+Ran 6 tests for test/unit/CraftingStation.t.sol:CraftingStationTest
+[PASS] test_CraftRecipe_ConsumesInputsAndProducesOutput() (gas: 375663)
+[PASS] test_CraftRecipe_RevertWhen_RecipeDoesNotExist() (gas: 50542)
+[PASS] test_CraftRecipe_RevertWhen_RecipeNotActive() (gas: 279208)
+[PASS] test_RegisterRecipe_RevertWhen_CallerUnauthorized() (gas: 33442)
+[PASS] test_RegisterRecipe_StoresRecipeData() (gas: 212191)
+[PASS] test_SetRecipeActiveStatus_AdminCanToggle() (gas: 251907)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 25.14ms (7.12ms CPU time)
+
+Ran 7 tests for test/unit/GameResources.t.sol:GameResourcesTest
+[PASS] test_BurnResource_ReducesBalance() (gas: 109594)
+[PASS] test_MintResource_AssignsCorrectBalance() (gas: 77870)
+[PASS] test_MintResource_RevertWhen_CallerLacksMinterRole() (gas: 42638)
+[PASS] test_MintResource_RevertWhen_InvalidResourceId() (gas: 39783)
+[PASS] test_MintResource_RevertWhen_ZeroAmount() (gas: 44997)
+[PASS] test_Pause_BlocksMinting() (gas: 90553)
+[PASS] test_Unpause_RestoresMinting() (gas: 147031)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 26.72ms (5.23ms CPU time)
+
+Ran 5 tests for test/unit/ResourceMarketplace.t.sol:ResourceMarketplaceTest
+[PASS] test_AddLiquidity_FirstProviderReceivesSquareRootMinusMinimum() (gas: 225838)
+[PASS] test_AddLiquidity_RevertWhen_DeadlineExpired() (gas: 39847)
+[PASS] test_RemoveLiquidity_ReturnsProportionalAmounts() (gas: 298916)
+[PASS] test_Swap_OutputAmountMatchesConstantProductFormula() (gas: 304512)
+[PASS] test_Swap_RevertWhen_PoolDoesNotExist() (gas: 41243)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 25.32ms (8.21ms CPU time)
+
+Ran 10 tests for test/unit/PriceOracleAdapter.t.sol:PriceOracleAdapterTest
+[PASS] test_GetLatestPrice_RevertWhen_DataIsStale() (gas: 74712)
+[PASS] test_GetLatestPrice_RevertWhen_FeedNotConfigured() (gas: 10670)
+[PASS] test_GetLatestPrice_RevertWhen_PriceIsNegative() (gas: 108805)
+[PASS] test_GetLatestPrice_RevertWhen_PriceIsZeroOrNegative() (gas: 98977)
+[PASS] test_GetLatestPrice_ScalesEightDecimalsToEighteen() (gas: 76453)
+[PASS] test_PriceUpdate_AfterStalenessReverts_FreshDataPasses() (gas: 116645)
+[PASS] test_RegisterPriceFeed_RevertWhen_CallerUnauthorized() (gas: 35325)
+[PASS] test_RegisterPriceFeed_StoresFeedAddress() (gas: 63839)
+[PASS] test_SetMaximumStaleness_RevertWhen_CallerUnauthorized() (gas: 32841)
+[PASS] test_SetMaximumStaleness_UpdatesValue() (gas: 41197)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 28.28ms (18.50ms CPU time)
+
+Ran 5 tests for test/unit/Governance.t.sol:GovernanceTest
+[PASS] test_FullProposalLifecycle_ProposeVoteQueueExecute() (gas: 728051)
+[PASS] test_GovernorParameters_MatchSpecification() (gas: 27107)
+[PASS] test_Mint_RevertWhen_ExceedsMaximumSupply() (gas: 35484)
+[PASS] test_Token_HasCorrectMetadata() (gas: 25917)
+[PASS] test_VotingPower_MatchesDelegatedBalance() (gas: 18545)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 26.98ms (7.30ms CPU time)
+
+Ran 6 tests for test/fuzz/GovernanceFuzz.t.sol:GovernanceFuzzTest
+[PASS] testFuzz_Delegate_VotingPowerMatchesBalance(address,uint256) (runs: 256, μ: 232222, ~: 232208)
+[PASS] testFuzz_Mint_BalanceIncreasesByMintedAmount(address,uint256) (runs: 256, μ: 138352, ~: 138309)
+[PASS] testFuzz_Mint_RevertWhen_CallerLacksMinterRole(address,uint256) (runs: 256, μ: 34084, ~: 34006)
+[PASS] testFuzz_Mint_RevertWhen_ExceedsMaxSupply(uint256) (runs: 256, μ: 35800, ~: 35851)
+[PASS] testFuzz_Transfer_PreservesTotalSupply(address,address,uint256) (runs: 256, μ: 201987, ~: 202030)
+[PASS] testFuzz_VotingPower_PreservedAfterTransferIfBothDelegated(uint256) (runs: 256, μ: 402868, ~: 402741)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 341.43ms (1.25s CPU time)
+
+Ran 6 tests for test/unit/MarketplaceFactory.t.sol:MarketplaceFactoryTest
+[PASS] test_DeployWithCreate2_DifferentSaltsProduceDifferentAddresses() (gas: 2374682)
+[PASS] test_DeployWithCreate2_MatchesPredictedAddress() (gas: 1225023)
+[PASS] test_DeployWithCreate2_RevertWhen_CallerUnauthorized() (gas: 33439)
+[PASS] test_DeployWithCreate_AssignsValidAddress() (gas: 1215469)
+[PASS] test_DeployWithCreate_RevertWhen_AlreadyExists() (gas: 1232363)
+[PASS] test_DeployWithCreate_RevertWhen_CallerUnauthorized() (gas: 32391)
+Suite result: ok. 6 passed; 0 failed; 0 skipped; finished in 342.98ms (14.08ms CPU time)
+
+Ran 9 tests for test/unit/LootBox.t.sol:LootBoxTest
+[PASS] test_Constructor_SetsInitialState() (gas: 19074)
+[PASS] test_FulfillRandomWords_RevertWhen_NotCoordinator() (gas: 30769)
+[PASS] test_OpenLootBox_BurnsWoodAndCreatesRequest() (gas: 137534)
+[PASS] test_OpenLootBox_FulfilledImmediately_AwardsCommonResource() (gas: 157761)
+[PASS] test_OpenLootBox_FulfilledWithRareRoll_AwardsRareResource() (gas: 188073)
+[PASS] test_SetLootBoxCost_AdminCanModify() (gas: 40163)
+[PASS] test_UpdateDropProbabilities_AdminCanModify() (gas: 72410)
+[PASS] test_UpdateDropProbabilities_RevertWhen_AllZeroWeights() (gas: 34941)
+[PASS] test_UpdateDropProbabilities_RevertWhen_CallerUnauthorized() (gas: 34000)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 342.57ms (14.59ms CPU time)
+
+Ran 4 tests for test/fuzz/ResourceMarketplaceFuzz.t.sol:ResourceMarketplaceFuzzTest
+[PASS] testFuzz_AddLiquidity_FirstDepositMintsExpectedShares(uint256,uint256) (runs: 256, μ: 229127, ~: 230219)
+[PASS] testFuzz_RemoveLiquidity_ReturnsNoMoreThanDeposited(uint256) (runs: 256, μ: 301017, ~: 302004)
+[PASS] testFuzz_Swap_KInvariantNeverDecreases(uint256) (runs: 256, μ: 313018, ~: 313090)
+[PASS] testFuzz_Swap_OutputAlwaysLessThanReserve(uint256) (runs: 256, μ: 305387, ~: 305459)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 343.96ms (1.22s CPU time)
+
+Ran 3 tests for test/fork/PriceOracleFork.t.sol:PriceOracleForkTest
+[PASS] test_Fork_ChainlinkFeedHasCorrectDecimals() (gas: 8949)
+[PASS] test_Fork_ChainlinkFeedReturnsPrice() (gas: 82155)
+[PASS] test_Fork_ChainlinkFeedReturnsRecentData() (gas: 19092)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 2.76s (2.78s CPU time)
