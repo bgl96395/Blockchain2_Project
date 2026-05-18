@@ -13,6 +13,8 @@ interface IGameResourcesMinter {
     function burnResource(address burnFromAddress, uint256 resourceId, uint256 burnAmount) external;
 }
 
+/// @title LootBox
+/// @notice Loot box system that distributes randomized in-game resources.
 contract LootBox is AccessControl, ReentrancyGuard {
     bytes32 public constant DROP_RATE_MANAGER_ROLE = keccak256("DROP_RATE_MANAGER_ROLE");
 
@@ -43,6 +45,11 @@ contract LootBox is AccessControl, ReentrancyGuard {
     event LootBoxFulfilled(uint256 indexed requestId, address indexed requester, uint256 awardedResourceId);
     event DropRatesUpdated(uint256[5] newWeights);
 
+    /// @notice Initializes the loot box contract.
+    /// @param vrfCoordinatorAddress Address of the VRF coordinator contract.
+    /// @param gameResourcesAddress Address of the game resources contract.
+    /// @param openingCostInWood Amount of wood required to open a loot box.
+    /// @param lootBoxAdministrator Address receiving admin and drop-rate manager roles.
     constructor(
         address vrfCoordinatorAddress,
         address gameResourcesAddress,
@@ -62,6 +69,8 @@ contract LootBox is AccessControl, ReentrancyGuard {
         _grantRole(DROP_RATE_MANAGER_ROLE, lootBoxAdministrator);
     }
 
+    /// @notice Opens a loot box and requests randomness from the VRF coordinator.
+    /// @return requestId Identifier of the randomness request.
     function openLootBox() external nonReentrant returns (uint256 requestId) {
         requestId = nextRequestId++;
         pendingRequests[requestId] = PendingLootRequest({ requester: msg.sender, fulfilled: false });
@@ -72,6 +81,9 @@ contract LootBox is AccessControl, ReentrancyGuard {
         emit LootBoxRequested(requestId, msg.sender);
     }
 
+    /// @notice Resolves a loot box request using a random value.
+    /// @param requestId Identifier of the pending loot request.
+    /// @param randomValue Random number supplied by the VRF coordinator.
     function fulfillRandomWords(uint256 requestId, uint256 randomValue) external {
         if (msg.sender != address(vrfCoordinator)) revert CallerIsNotCoordinator();
 
@@ -88,6 +100,9 @@ contract LootBox is AccessControl, ReentrancyGuard {
         emit LootBoxFulfilled(requestId, request.requester, awardedResourceId);
     }
 
+    /// @notice Determines which reward should be granted for a rolled value.
+    /// @param rolledValue Randomized value used for reward selection.
+    /// @return awardedResourceId Identifier of the rewarded resource.
     function _determineRewardFromRoll(uint256 rolledValue) private view returns (uint256 awardedResourceId) {
         uint256 cumulativeWeight = 0;
         for (uint256 i = 0; i < 5; i++) {
@@ -99,6 +114,8 @@ contract LootBox is AccessControl, ReentrancyGuard {
         return possibleRewardResourceIds[4];
     }
 
+    /// @notice Updates loot box drop probability weights.
+    /// @param newWeights New probability weights for all reward resources.
     function updateDropProbabilities(uint256[5] calldata newWeights) external onlyRole(DROP_RATE_MANAGER_ROLE) {
         uint256 weightSum = 0;
         for (uint256 i = 0; i < 5; i++) {
@@ -112,6 +129,8 @@ contract LootBox is AccessControl, ReentrancyGuard {
         emit DropRatesUpdated(newWeights);
     }
 
+    /// @notice Updates the loot box opening cost.
+    /// @param newCost New amount of wood required to open a loot box.
     function setLootBoxCost(uint256 newCost) external onlyRole(DROP_RATE_MANAGER_ROLE) {
         lootBoxOpeningCostInWood = newCost;
     }
