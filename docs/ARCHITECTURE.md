@@ -185,3 +185,64 @@ documented GraphQL queries are committed in subgraph/README.md.
 - Chainlink VRF coordinator is trusted to return uniformly random words. Tests
   use a MockVRFCoordinator to verify deterministic behavior under controlled
   randomness; production deployments would integrate the live VRF subscription.
+
+
+  ## 12. Sequence Diagrams
+
+### 12.1 Resource Swap
+
+\`\`\`mermaid
+sequenceDiagram
+    actor User
+    participant Frontend
+    participant Marketplace as ResourceMarketplace
+    participant Resources as GameResources
+
+    User->>Frontend: Click swap
+    Frontend->>Marketplace: swapExactInputForOutput()
+    Marketplace->>Marketplace: Apply 0.3% fee, compute output
+    Marketplace->>Marketplace: Update reserves (CEI)
+    Marketplace->>Resources: safeTransferFrom(WOOD, user, pool)
+    Marketplace->>Resources: safeTransferFrom(IRON, pool, user)
+    Marketplace-->>Frontend: ResourcesSwapped event
+    Frontend-->>User: Updated balance
+\`\`\`
+
+### 12.2 Governance Proposal Lifecycle
+
+\`\`\`mermaid
+sequenceDiagram
+    actor Proposer
+    actor Voters
+    participant Governor as GameGovernor
+    participant Timelock as GameTimelock
+    participant Target
+
+    Proposer->>Governor: propose()
+    Governor-->>Proposer: ProposalCreated
+    Voters->>Governor: castVote()
+    Governor->>Governor: Tally, check 4% quorum
+    Proposer->>Governor: queue()
+    Governor->>Timelock: schedule()
+    Note over Timelock: Wait 2 days
+    Proposer->>Governor: execute()
+    Governor->>Timelock: executeOperation()
+    Timelock->>Target: Apply change
+\`\`\`
+
+### 12.3 Crafting
+
+\`\`\`mermaid
+sequenceDiagram
+    actor Player
+    participant Crafting as CraftingStation
+    participant Resources as GameResources
+
+    Player->>Crafting: craftRecipe(0)
+    Crafting->>Resources: balanceOf(player, WOOD)
+    Crafting->>Resources: balanceOf(player, IRON)
+    Crafting->>Resources: burnResource(WOOD, 2)
+    Crafting->>Resources: burnResource(IRON, 1)
+    Crafting->>Resources: mintResource(SWORD, 1)
+    Crafting-->>Player: RecipeCrafted event
+\`\`\`
